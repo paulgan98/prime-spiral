@@ -48,6 +48,7 @@ function Canvas(props) {
   };
 
   const handlePan = (e) => {
+    e.preventDefault();
     if (!isMouseDown) {
       setMousePos({ x: e.clientX, y: e.clientY });
       return;
