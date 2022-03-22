@@ -1,5 +1,6 @@
 import React from "react";
 import * as spiral from "../spiralMethods";
+import { MAXLENGTH } from "../App";
 
 // Controls component for modifying Canvas
 function ControlPanel(props) {
@@ -19,11 +20,13 @@ function ControlPanel(props) {
   const handleSpiralLengthInput = () => {
     var inp = document.getElementById("Spiral-length-input");
     let v = parseInt(inp.value) || 1;
+    v = checkValidInput(v);
     updateSpiralImage(v);
   };
 
   const checkValidInput = (n) => {
-    return Math.max(1, n);
+    // return Math.max(1, n), 1;
+    return Math.min(Math.max(1, n), MAXLENGTH);
   };
 
   return (

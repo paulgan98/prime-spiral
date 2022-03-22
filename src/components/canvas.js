@@ -86,6 +86,8 @@ function Canvas(props) {
     canvas = modifyCanvas(canvas);
     const ctx = canvas.getContext("2d");
 
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
     drawSpiral(props.spiralLength, props.spiralCorners, ctxPos, ctx); // draw spiral lines
     drawPrimes(props.nPrimes, props.primesPos, ctxPos, ctx); // draw circles
 

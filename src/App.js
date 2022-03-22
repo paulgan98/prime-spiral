@@ -8,7 +8,8 @@ import "./App.css";
 //            /     \
 //  ControlPanel     Canvas
 
-var SPIRALLENGTH = 100000;
+var SPIRALLENGTH = 10000;
+export const MAXLENGTH = 600000;
 
 function App() {
   // [adPtr, steps, counter, i]
