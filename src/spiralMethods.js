@@ -74,8 +74,6 @@ export function buildSpiral(n, arr, dataArray) {
 
 // make array of relative coords of all prime numbers
 export function makePrimesArr(n, spiralCorners, primes) {
-  // if
-  // if (n <= )
   const arr = []; // return this
   var ptr = 0; // point to primes array
   for (let i = 1; i < spiralCorners.length; i++) {

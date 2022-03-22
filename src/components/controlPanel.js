@@ -25,7 +25,6 @@ function ControlPanel(props) {
   };
 
   const checkValidInput = (n) => {
-    // return Math.max(1, n), 1;
     return Math.min(Math.max(1, n), MAXLENGTH);
   };
 

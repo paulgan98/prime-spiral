@@ -8,24 +8,31 @@ import "./App.css";
 //            /     \
 //  ControlPanel     Canvas
 
-var SPIRALLENGTH = 10000;
+var SPIRALLENGTH = 2000;
 export const MAXLENGTH = 600000;
 
 function App() {
   // [adPtr, steps, counter, i]
-  var dataArr = [0, 1, 2, 2]; // contains data used in building spiral array
+  const [dataArr, setDataArr] = useState([0, 1, 2, 2]);
+  const printArr = (arr) => {
+    var a = "";
+    for (let i = 0; i < arr.length; i++) {
+      a = a.concat(arr[i].toString(), " | ");
+    }
+    return a;
+  };
 
   // State hooks; will be passed as props to ControlPanel and Canvas
   const [spiralLength, setSpiralLength] = useState(SPIRALLENGTH);
-  const [primes, setPrimes] = useState(spiral.getPrimes(spiralLength, [2]));
+  const [primes, setPrimes] = useState(spiral.getPrimes(SPIRALLENGTH, [2]));
   const [spiralCorners, setSpiralCorners] = useState(
-    spiral.buildSpiral(spiralLength, [[0, 0, 1]], dataArr)
+    spiral.buildSpiral(SPIRALLENGTH, [[0, 0, 1]], dataArr)
   );
   const [primesPos, setPrimesPos] = useState(
-    spiral.makePrimesArr(spiralLength, spiralCorners, primes)
+    spiral.makePrimesArr(SPIRALLENGTH, spiralCorners, primes)
   );
   const [nPrimes, setNPrimes] = useState(
-    spiral.numPrimes(spiralLength, primes)
+    spiral.numPrimes(SPIRALLENGTH, primes)
   );
 
   // canvas dimensions
@@ -44,7 +51,7 @@ function App() {
   useEffect(() => {
     window.addEventListener("resize", handleResize);
     return () => {
-      window.addEventListener("resize", handleResize);
+      window.removeEventListener("resize", handleResize);
     };
   }, []);
 
