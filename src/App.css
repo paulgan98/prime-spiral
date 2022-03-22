@@ -28,6 +28,110 @@
   color: #61dafb;
 }
 
+.Div {
+  margin-bottom: 50px;
+  background-color: white;
+}
+
+/* Center */
+.Div-1 {
+  margin-left: 200px;
+}
+
+/* Input and arrows */
+.Div-2 {
+  margin-top: -22px;
+  margin-left: 30px;
+}
+
+.Title {
+  text-align: center;
+  font-family: Cambria, Georgia, serif;
+  font-size: 40px;
+}
+
+.Button-long {
+  margin-left: 30px;
+  margin-right: 30px;
+  width: 70px;
+}
+
+.Button-short {
+  width: 28px;
+  text-align: center;
+}
+
+.Canvas {
+  margin-left: 30px;
+  margin-right: 30px;
+  margin-bottom: 10px;
+  border-style: solid;
+  border-color: #98e9ff;
+}
+
+.Spiral-length-input {
+  width: 100px;
+  text-align: center;
+  margin-left: 4px;
+  margin-right: 4px;
+}
+
+.Controls-div {
+  /* float: left; */
+  margin-top: 10px;
+  margin-left: 30px;
+}
+
+.By-text {
+  margin-top: -20px;
+  text-align: center;
+  color: rgb(196, 196, 196);
+  font-size: 10px;
+}
+
+input::-webkit-input-placeholder {
+  color: black;
+}
+input:focus::-webkit-input-placeholder {
+  opacity: 0;
+}
+/* Firefox < 19 */
+input:-moz-placeholder {
+  color: black;
+}
+input:focus:-moz-placeholder {
+  opacity: 0;
+}
+
+/* Firefox > 19 */
+input::-moz-placeholder {
+  color: black;
+}
+input:focus::-moz-placeholder {
+  opacity: 0;
+}
+
+/* Internet Explorer 10 */
+input:-ms-input-placeholder {
+  color: black;
+}
+input:focus:-ms-input-placeholder {
+  opacity: 0;
+}
+
+/* Hide input box arrows */
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
