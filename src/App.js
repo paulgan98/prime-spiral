@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import "./App.css";
 import Canvas from "./components/canvas.js";
 import ControlPanel from "./components/controlPanel";
 import * as spiral from "./spiralMethods";
+import "./App.css";
 
 //              App
 //            /     \
@@ -49,7 +49,7 @@ function App() {
 
   return (
     <div className="Div">
-      <h1 className="Title">Prime Spiral</h1>
+      <h1 className="Title">The Prime Spiral</h1>
       <p className="By-text"> A React app by Paul Gan</p>
       <Canvas
         className="Canvas"

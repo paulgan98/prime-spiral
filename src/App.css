@@ -69,6 +69,15 @@
   border-color: #98e9ff;
 }
 
+#canvas {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+}
+
 .Spiral-length-input {
   width: 100px;
   text-align: center;

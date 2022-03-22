@@ -9,15 +9,11 @@ function Canvas(props) {
   const canvasRef = useRef(null);
   var canvas = null;
   var [Width, Height] = [props.windowDims.Width, props.windowDims.Height];
-  const scale = 0.4 * window.devicePixelRatio || 1;
+  const scale = 0.5 * window.devicePixelRatio || 1;
 
   // state hooks
   const [isMouseDown, setMouseDown] = useState(0);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  // const [ctxPos, setCtxPos] = useState({
-  //   x: props.windowDims.Width / 2,
-  //   y: props.windowDims.Height / 2,
-  // });
   const [ctxPos, setCtxPos] = useState({
     x: props.windowDims.Width / 2,
     y: props.windowDims.Height / 2,
@@ -132,9 +128,6 @@ function drawCircle(x, y, ctx) {
 // draw line between point 1 and point 2
 function drawLine(p1, p2, ctx) {
   ctx.strokeStyle = "#D0D0D0"; // grey
-  // const _lineWidth = Math.max(3, Math.floor((STEPSIZE * STEPSCALE) / 12));
-  // p1[dir] *= 1.2; //  Math.floor(0.5 * _lineWidth);
-  // p2[dir] *= 1.2;
   ctx.lineWidth = Math.max(3, Math.floor((STEPSIZE * STEPSCALE) / 12));
   ctx.lineCap = "round";
   ctx.beginPath();
