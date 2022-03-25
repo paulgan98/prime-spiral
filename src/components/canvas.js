@@ -150,9 +150,9 @@ function drawSpiral(n, arr, pos, ctx) {
     let p2 = [...next];
     for (let j = 0; j < 2; j++) {
       p1[j] *= STEPSIZE * STEPSCALE;
-      p1[j] += posArr[j]; // translation
+      // p1[j] += posArr[j]; // translation
       p2[j] *= STEPSIZE * STEPSCALE;
-      p2[j] += posArr[j]; // translation
+      // p2[j] += posArr[j]; // translation
     }
     // if next corner point is longer than what we need
     if (next[2] > n) {
