@@ -8,19 +8,13 @@ import "./App.css";
 //            /     \
 //  ControlPanel     Canvas
 
-var SPIRALLENGTH = 2000;
-export const MAXLENGTH = 600000;
+var SPIRALLENGTH = 20000;
+export const MAXLENGTH = 800000;
 
 function App() {
   // [adPtr, steps, counter, i]
-  const [dataArr, setDataArr] = useState([0, 1, 2, 2]);
-  const printArr = (arr) => {
-    var a = "";
-    for (let i = 0; i < arr.length; i++) {
-      a = a.concat(arr[i].toString(), " | ");
-    }
-    return a;
-  };
+  const [dataArr, _] = useState([0, 1, 2, 2]);
+  // var controlPanelData = { center: false };
 
   // State hooks; will be passed as props to ControlPanel and Canvas
   const [spiralLength, setSpiralLength] = useState(SPIRALLENGTH);
@@ -41,12 +35,20 @@ function App() {
     Height: window.innerHeight - 160,
   });
 
+  const [centerCanvasBool, setCenterCanvasBool] = useState(false);
+  // const [controlPanelData, setControlPanelData] = useState({ center: false });
+  const [showSpiral, setShowSpiral] = useState(true);
+
   const handleResize = () => {
     setWindowDims({
       Width: window.innerWidth - 60,
       Height: window.innerHeight - 160,
     });
   };
+
+  // const getControlPanelData = (data) => {
+  //   setControlPanelData(data);
+  // };
 
   useEffect(() => {
     window.addEventListener("resize", handleResize);
@@ -66,6 +68,11 @@ function App() {
         nPrimes={nPrimes}
         spiralCorners={spiralCorners}
         windowDims={windowDims}
+        centerCanvasBool={centerCanvasBool}
+        setCenterCanvasBool={setCenterCanvasBool}
+        showSpiral={showSpiral}
+        // controlPanelData={controlPanelData}
+        // setControlPanelData={setControlPanelData}
       />
       <ControlPanel
         spiralLength={spiralLength}
@@ -80,6 +87,13 @@ function App() {
         setSpiralCorners={setSpiralCorners}
         setPrimes={setPrimes}
         windowDims={windowDims}
+        setCenterCanvasBool={setCenterCanvasBool}
+        showSpiral={showSpiral}
+        setShowSpiral={setShowSpiral}
+
+        // controlPanelData={controlPanelData}
+        // setControlPanelData={setControlPanelData}
+        // getControlPanelData={getControlPanelData}
       />
     </div>
   );

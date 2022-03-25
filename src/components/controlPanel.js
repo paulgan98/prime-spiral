@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import * as spiral from "../spiralMethods";
 import { MAXLENGTH } from "../App";
 
@@ -28,8 +28,36 @@ function ControlPanel(props) {
     return Math.min(Math.max(1, n), MAXLENGTH);
   };
 
+  const centerCanvas = () => props.setCenterCanvasBool(true);
+
+  // const toggleSpiral = () => {};
+
+  const toggleShowSpiralButton = () => {
+    var elem = document.getElementById("Show-spiral-button");
+    if (props.showSpiral) {
+      elem.innerHTML = "Show Spiral";
+      props.setShowSpiral(false);
+    } else {
+      elem.innerHTML = "Hide Spiral";
+      props.setShowSpiral(true);
+    }
+  };
+
+  // const sendToParent = (field, val) => {
+  //   const data = props.controlPanelData;
+  //   switch (field) {
+  //     case "center":
+  //       data.center = val;
+  //       break;
+  //   }
+  //   // props.setControlPanelData(data);
+  //   props.getControlPanelData(data);
+  // };
+
+  // useEffect(() => {}, [props.controlPanelData]);
+
   return (
-    <div className="Div-2">
+    <div className="Controls-div">
       <button
         className="Button-short"
         onClick={() => {
@@ -53,6 +81,22 @@ function ControlPanel(props) {
         }}
       >
         ▲
+      </button>
+      <button
+        className="Button-long"
+        onClick={centerCanvas}
+        // onClick={() => {
+        //   sendToParent("center", true);
+        // }}
+      >
+        Center
+      </button>
+      <button
+        className="Button-long"
+        id="Show-spiral-button"
+        onClick={toggleShowSpiralButton}
+      >
+        Hide Spiral
       </button>
     </div>
   );
