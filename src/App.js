@@ -8,15 +8,14 @@ import "./App.css";
 //            /     \
 //  ControlPanel     Canvas
 
-var SPIRALLENGTH = 20000;
-export const MAXLENGTH = 800000;
+var SPIRALLENGTH = 20;
+export const MAXLENGTH = 1000000;
 
 function App() {
+  // State hooks; will be passed as props to ControlPanel and Canvas
+
   // [adPtr, steps, counter, i]
   const [dataArr, _] = useState([0, 1, 2, 2]);
-  // var controlPanelData = { center: false };
-
-  // State hooks; will be passed as props to ControlPanel and Canvas
   const [spiralLength, setSpiralLength] = useState(SPIRALLENGTH);
   const [primes, setPrimes] = useState(spiral.getPrimes(SPIRALLENGTH, [2]));
   const [spiralCorners, setSpiralCorners] = useState(
@@ -28,17 +27,19 @@ function App() {
   const [nPrimes, setNPrimes] = useState(
     spiral.numPrimes(SPIRALLENGTH, primes)
   );
-
   // canvas dimensions
   const [windowDims, setWindowDims] = useState({
     Width: window.innerWidth - 60,
     Height: window.innerHeight - 160,
   });
-
   const [centerCanvasBool, setCenterCanvasBool] = useState(false);
-  // const [controlPanelData, setControlPanelData] = useState({ center: false });
   const [showSpiral, setShowSpiral] = useState(true);
+  const [crazyMode, setCrazyMode] = useState(false);
 
+  const _colors = generateRandomColors;
+  const [colors, setColors] = useState(_colors);
+
+  // Methods
   const handleResize = () => {
     setWindowDims({
       Width: window.innerWidth - 60,
@@ -46,9 +47,16 @@ function App() {
     });
   };
 
-  // const getControlPanelData = (data) => {
-  //   setControlPanelData(data);
-  // };
+  const generateRandomColors = () => {
+    var colors = [];
+    for (let i = 0; i < spiralLength; i++) {
+      const randomColor = "#".concat(
+        Math.floor(Math.random() * 16777215).toString(16)
+      );
+      colors.push(randomColor);
+    }
+    return colors;
+  };
 
   useEffect(() => {
     window.addEventListener("resize", handleResize);
@@ -58,7 +66,7 @@ function App() {
   }, []);
 
   return (
-    <div className="Div">
+    <div className="Div1">
       <h1 className="Title">The Prime Spiral</h1>
       <p className="By-text"> A React app by Paul Gan</p>
       <Canvas
@@ -71,8 +79,8 @@ function App() {
         centerCanvasBool={centerCanvasBool}
         setCenterCanvasBool={setCenterCanvasBool}
         showSpiral={showSpiral}
-        // controlPanelData={controlPanelData}
-        // setControlPanelData={setControlPanelData}
+        crazyMode={crazyMode}
+        colors={colors}
       />
       <ControlPanel
         spiralLength={spiralLength}
@@ -90,6 +98,10 @@ function App() {
         setCenterCanvasBool={setCenterCanvasBool}
         showSpiral={showSpiral}
         setShowSpiral={setShowSpiral}
+        crazyMode={crazyMode}
+        setCrazyMode={setCrazyMode}
+        setColors={setColors}
+        generateRandomColors={generateRandomColors}
 
         // controlPanelData={controlPanelData}
         // setControlPanelData={setControlPanelData}

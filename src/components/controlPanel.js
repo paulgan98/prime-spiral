@@ -32,7 +32,7 @@ function ControlPanel(props) {
 
   // const toggleSpiral = () => {};
 
-  const toggleShowSpiralButton = () => {
+  const toggleShowSpiral = () => {
     var elem = document.getElementById("Show-spiral-button");
     if (props.showSpiral) {
       elem.innerHTML = "Show Spiral";
@@ -43,18 +43,17 @@ function ControlPanel(props) {
     }
   };
 
-  // const sendToParent = (field, val) => {
-  //   const data = props.controlPanelData;
-  //   switch (field) {
-  //     case "center":
-  //       data.center = val;
-  //       break;
-  //   }
-  //   // props.setControlPanelData(data);
-  //   props.getControlPanelData(data);
-  // };
-
-  // useEffect(() => {}, [props.controlPanelData]);
+  const toggleCrazyMode = () => {
+    const elem = document.getElementById("Crazy-mode-button");
+    if (props.crazyMode) {
+      elem.innerHTML = "Crazy Mode";
+      props.setCrazyMode(false);
+    } else {
+      elem.innerHTML = "Normal Mode";
+      props.setCrazyMode(true);
+      props.setColors(props.generateRandomColors);
+    }
+  };
 
   return (
     <div className="Controls-div">
@@ -83,21 +82,32 @@ function ControlPanel(props) {
         ▲
       </button>
       <button
-        className="Button-long"
-        onClick={centerCanvas}
-        // onClick={() => {
-        //   sendToParent("center", true);
-        // }}
+        className="Button-max"
+        onClick={() => {
+          updateSpiralImage(MAXLENGTH);
+        }}
       >
+        Max
+      </button>
+      <button className="Button-long" onClick={centerCanvas}>
         Center
       </button>
-      <button
-        className="Button-long"
-        id="Show-spiral-button"
-        onClick={toggleShowSpiralButton}
-      >
-        Hide Spiral
-      </button>
+      <div className="Controls-div">
+        <button
+          className="Button-longer"
+          id="Show-spiral-button"
+          onClick={toggleShowSpiral}
+        >
+          Hide Spiral
+        </button>
+        <button
+          id="Crazy-mode-button"
+          className="Button-longer"
+          onClick={toggleCrazyMode}
+        >
+          Crazy Mode
+        </button>
+      </div>
     </div>
   );
 }

@@ -2,50 +2,64 @@ import React, { useRef, useEffect, useState } from "react";
 import "../App.css";
 
 var STEPSIZE = 20; // distance between current and next point
-var STEPSCALE = 0.7; // scalar for STEPSIZE
-var CIRCLESIZE = (STEPSIZE * STEPSCALE) / 6;
+var STEPSCALE = 3; // scalar for STEPSIZE
+var CIRCLESIZE = (STEPSIZE * STEPSCALE) / 5;
 
 function Canvas(props) {
   // canvas variables
   const canvasRef = useRef(null);
   var canvas = null;
   var [Width, Height] = [props.windowDims.Width, props.windowDims.Height];
-  const scale = 0.5 * window.devicePixelRatio || 1;
+  const scale = window.devicePixelRatio || 1;
 
   // state hooks
   const [isMouseDown, setMouseDown] = useState(0);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  // const [scaledMousePos, setScaledMousePos] = useState({ x: 0, y: 0 });
-  const [scaleFactor, setScaleFactor] = useState(scale); // 0.25 ~ 1, how much to scale canvas by
+  const [transformedMousePos, setTransformedMousePos] = useState([0, 0]);
+  const [selectedNumber, setSelectedNumber] = useState("");
+  const [scaleFactor, setScaleFactor] = useState(1); // how much to scale canvas by
+  const [prevScaleFactor, setPrevScaleFactor] = useState(1);
   const [centerBool, setCenterBool] = useState(false);
   const [transform, setTransform] = useState([
-    scale,
+    1,
     0,
     0,
-    scale,
+    1,
     (props.windowDims.Width * scale) / 2,
     (props.windowDims.Height * scale) / 2,
   ]);
 
+  // create HD canvas
+  function createHiPPICanvas(w, h) {
+    let cv = canvasRef.current;
+    cv.width = w * scale;
+    cv.height = h * scale;
+    cv.style.width = w + "px";
+    cv.style.height = h + "px";
+    cv.getContext("2d").scale(scale, scale);
+    return cv;
+  }
+
   const centerCanvas = () => {
     setCenterBool(true);
     const temp = [...transform];
-    temp[4] = (props.windowDims.Width * scale) / 2;
-    temp[5] = (props.windowDims.Height * scale) / 2;
+    temp[4] = (props.windowDims.Width / 2) * scale;
+    temp[5] = (props.windowDims.Height / 2) * scale;
     setTransform(temp);
     props.setCenterCanvasBool(false);
   };
 
   // updates relative and absolute mouse positions
   const updateMousePositions = (e) => {
-    var rect = canvas.getBoundingClientRect(),
-      scaleX = canvas.width / rect.width,
-      scaleY = canvas.height / rect.height;
-    setMousePos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
-    // setScaledMousePos({
-    //   x: (e.clientX - rect.left) * scaleX,
-    //   y: (e.clientY - rect.top) * scaleY,
-    // });
+    var rect = canvas.getBoundingClientRect();
+    setMousePos({
+      x: (e.clientX - rect.left) * scale,
+      y: (e.clientY - rect.top) * scale,
+    });
+    setTransformedMousePos([
+      (mousePos.x - transform[4]) / transform[0],
+      (mousePos.y - transform[5]) / transform[3],
+    ]);
   };
 
   const handleMouseDown = (e) => {
@@ -61,8 +75,8 @@ function Canvas(props) {
     e.preventDefault();
     // calculate how much mouse moved
     var rect = canvas.getBoundingClientRect();
-    const xDiff = e.clientX - rect.left - mousePos.x;
-    const yDiff = e.clientY - rect.top - mousePos.y;
+    const xDiff = (e.clientX - rect.left) * scale - mousePos.x;
+    const yDiff = (e.clientY - rect.top) * scale - mousePos.y;
 
     const temp = [...transform];
     temp[4] = temp[4] + xDiff;
@@ -83,7 +97,7 @@ function Canvas(props) {
   const handleZoom = (e) => {
     e.preventDefault();
     updateMousePositions(e);
-    const zoomSpeed = 0.003;
+    const zoomSpeed = 0.001;
     var s = scaleFactor + e.deltaY * -zoomSpeed;
     s = Math.min(Math.max(0.05, s), 7);
     if (scaleFactor !== s) {
@@ -92,6 +106,7 @@ function Canvas(props) {
       temp[3] = s;
       temp[4] = mousePos.x - (mousePos.x - transform[4]) * (s / scaleFactor);
       temp[5] = mousePos.y - (mousePos.y - transform[5]) * (s / scaleFactor);
+      setPrevScaleFactor(scaleFactor);
       setScaleFactor(s);
       setTransform(temp);
     }
@@ -110,20 +125,27 @@ function Canvas(props) {
   };
 
   // draw all circles based on hash table of {[x, y] : number}
-  function drawPrimes(n, arr, ctx) {
+  const drawPrimes = (n, arr, ctx) => {
+    var selected = false;
     for (let i = 0; i < n; i++) {
       let coord = [...arr[i]];
       for (let j = 0; j < 2; j++) {
         coord[j] *= STEPSIZE * STEPSCALE;
       }
-      if (!isInCircle([0, 0], coord, CIRCLESIZE)) {
-        drawCircle(coord[0], coord[1], CIRCLESIZE, "black", ctx);
+      if (!isInCircle(transformedMousePos, coord, CIRCLESIZE + 2)) {
+        const color = props.crazyMode ? props.colors[i] : "black";
+        drawCircle(coord[0], coord[1], CIRCLESIZE, color, ctx);
+      } else {
+        // mouse is in circle
+        drawCircle(coord[0], coord[1], CIRCLESIZE, "red", ctx);
+        selected = true;
+        setSelectedNumber(coord[2].toString());
       }
-      // else {
-      //   drawCircle(coord[0], coord[1], 50, "black", ctx);
-      // }
     }
-  }
+    if (!selected) {
+      setSelectedNumber("");
+    }
+  };
 
   // draw on canvas
   const draw = (ctx) => {
@@ -131,19 +153,37 @@ function Canvas(props) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.setTransform(...transform);
 
+    // const x = (mousePos.x - transform[4]) / transform[0];
+    // const y = (mousePos.y - transform[5]) / transform[3];
+    // const [x, y] = transformedMousePos;
+
     // ctx.beginPath();
-    // ctx.arc(scaledMousePos.x, scaledMousePos.y, 10, 0, 2 * Math.PI);
-    // ctx.fillStyle = "red";
+    // ctx.arc(x, y, 10, 0, 2 * Math.PI);
+    // ctx.fillStyle = "blue";
     // ctx.fill();
 
     if (props.showSpiral) {
       drawSpiral(props.spiralLength, props.spiralCorners, ctx); // draw spiral lines
     }
     drawPrimes(props.nPrimes, props.primesPos, ctx); // draw circles
+
+    // show selected number
+    ctx.font = `${45 / transform[0]}px Arial`;
+    ctx.fillStyle = "red";
+    ctx.fillText(
+      selectedNumber,
+      transformedMousePos[0] + 10,
+      transformedMousePos[1] - 10
+    );
   };
 
   useEffect(() => {
     canvas = canvasRef.current;
+    canvas = createHiPPICanvas(
+      props.windowDims.Width, // * scale,
+      props.windowDims.Height // * scale
+    );
+
     const context = canvas.getContext("2d");
     draw(context); // draw on canvas
 
@@ -176,21 +216,14 @@ function Canvas(props) {
     props.windowDims,
     props.centerCanvasBool,
     props.showSpiral,
+    props.crazyMode,
     scaleFactor,
     centerBool,
     transform,
-    // scaledMousePos,
+    transformedMousePos,
+    selectedNumber,
   ]);
-  return (
-    <div>
-      <canvas
-        ref={canvasRef}
-        width={props.windowDims.Width * scale}
-        height={props.windowDims.Height * scale}
-        className="Canvas"
-      />
-    </div>
-  );
+  return <canvas ref={canvasRef} className="Canvas" />;
 }
 
 export default Canvas;
