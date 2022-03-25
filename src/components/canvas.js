@@ -14,10 +14,7 @@ function Canvas(props) {
   // state hooks
   const [isMouseDown, setMouseDown] = useState(0);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [ctxPos, setCtxPos] = useState({
-    x: props.windowDims.Width / 2,
-    y: props.windowDims.Height / 2,
-  });
+  const [transform, setTransform] = useState([1, 0, 0, 1, 0, 0]);
 
   const modifyCanvas = (_canvas) => {
     // Set display size (css pixels).
@@ -31,34 +28,38 @@ function Canvas(props) {
   };
 
   const centerCanvas = () => {
-    setCtxPos({
-      x: props.windowDims.Width / 2,
-      y: props.windowDims.Height / 2,
-    });
+    const temp = transform;
+    temp[4] = props.windowDims.Width / 2;
+    temp[5] = props.windowDims.Height / 2;
+    setTransform(temp);
   };
 
   const handleMouseDown = (e) => {
-    e.preventDefault();
     setMouseDown(1);
   };
 
   const handleMouseUp = (e) => {
-    e.preventDefault();
     setMouseDown(0);
   };
 
   const handlePan = (e) => {
     e.preventDefault();
+    const rect = canvas.getBoundingClientRect;
+    let xDiff = e.clientX - rect.left - mousePos.x;
+    let yDiff = e.clientY - rect.top - mousePos.y;
+
+    const temp = transform;
+    temp[4] = 
+    temp[5] = 
+    // setMousePos({ x: e.clientX, y: e.clientY });
+  };
+
+  const handleMouseMove = (e) => {
     if (!isMouseDown) {
-      setMousePos({ x: e.clientX, y: e.clientY });
-      return;
+      handlePan(e);
     }
-
-    let xDiff = e.clientX - mousePos.x;
-    let yDiff = e.clientY - mousePos.y;
-
-    setCtxPos({ x: ctxPos.x + xDiff, y: ctxPos.y + yDiff });
-    setMousePos({ x: e.clientX, y: e.clientY });
+    const rect = canvas.getBoundingClientRect();
+    setMousePos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
   };
 
   const handleZoom = (e) => {
@@ -88,23 +89,23 @@ function Canvas(props) {
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    drawSpiral(props.spiralLength, props.spiralCorners, ctxPos, ctx); // draw spiral lines
-    drawPrimes(props.nPrimes, props.primesPos, ctxPos, ctx); // draw circles
+    drawSpiral(props.spiralLength, props.spiralCorners, ctx); // draw spiral lines
+    drawPrimes(props.nPrimes, props.primesPos, ctx); // draw circles
 
     canvas.addEventListener("mousedown", handleMouseDown);
     canvas.addEventListener("mouseup", handleMouseUp);
-    canvas.addEventListener("mousemove", handlePan);
+    canvas.addEventListener("mousemove", handleMouseMove);
     canvas.addEventListener("wheel", handleZoom);
     canvas.addEventListener("mouseleave", handleMouseLeave);
 
     return () => {
       canvas.removeEventListener("mousedown", handleMouseDown);
       canvas.removeEventListener("mouseup", handleMouseUp);
-      canvas.removeEventListener("mousemove", handlePan);
+      canvas.removeEventListener("mousemove", handleMouseMove);
       canvas.removeEventListener("wheel", handleZoom);
       canvas.removeEventListener("mouseleave", handleMouseLeave);
     };
-  }, [mousePos, isMouseDown, props.spiralLength, props.windowDims, ctxPos]);
+  }, [mousePos, isMouseDown, props.spiralLength, props.windowDims]);
   return (
     <div>
       <canvas ref={canvasRef} className="Canvas" />
@@ -131,7 +132,7 @@ function drawCircle(x, y, ctx) {
 // draw line between point 1 and point 2
 function drawLine(p1, p2, ctx) {
   ctx.strokeStyle = "#D0D0D0"; // grey
-  ctx.lineWidth = Math.max(3, Math.floor((STEPSIZE * STEPSCALE) / 12));
+  ctx.lineWidth = Math.max(3, Math.floor((STEPSIZE * STEPSCALE) / 16));
   ctx.lineCap = "round";
   ctx.beginPath();
   ctx.moveTo(p1[0], p1[1]);
@@ -140,8 +141,7 @@ function drawLine(p1, p2, ctx) {
 }
 
 // draw spiral lines from array of corner coords [x, y]
-function drawSpiral(n, arr, pos, ctx) {
-  const posArr = [pos.x, pos.y];
+function drawSpiral(n, arr, ctx) {
   var curr = arr[0];
   var next = null;
   for (let i = 1; i < arr.length; i++) {
@@ -150,9 +150,7 @@ function drawSpiral(n, arr, pos, ctx) {
     let p2 = [...next];
     for (let j = 0; j < 2; j++) {
       p1[j] *= STEPSIZE * STEPSCALE;
-      // p1[j] += posArr[j]; // translation
       p2[j] *= STEPSIZE * STEPSCALE;
-      // p2[j] += posArr[j]; // translation
     }
     // if next corner point is longer than what we need
     if (next[2] > n) {
@@ -168,13 +166,11 @@ function drawSpiral(n, arr, pos, ctx) {
 }
 
 // draw all circles based on hash table of {[x, y] : number}
-function drawPrimes(n, arr, pos, ctx) {
-  const posArr = [pos.x, pos.y];
+function drawPrimes(n, arr, ctx) {
   for (let i = 0; i < n; i++) {
     let coord = [...arr[i]];
     for (let j = 0; j < 2; j++) {
       coord[j] *= STEPSIZE * STEPSCALE;
-      coord[j] += posArr[j]; // translation
     }
     drawCircle(coord[0], coord[1], ctx);
   }
