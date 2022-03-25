@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import "../App.css";
 
-var STEPSIZE = 20; // distance between current and next point
+var STEPSIZE = 15; // distance between current and next point
 var STEPSCALE = 3; // scalar for STEPSIZE
 var CIRCLESIZE = (STEPSIZE * STEPSCALE) / 5;
 
