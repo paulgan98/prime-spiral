@@ -105,7 +105,6 @@ function Canvas(props) {
       temp[3] = s;
       temp[4] = mousePos.x - (mousePos.x - transform[4]) * (s / scaleFactor);
       temp[5] = mousePos.y - (mousePos.y - transform[5]) * (s / scaleFactor);
-      setPrevScaleFactor(scaleFactor);
       setScaleFactor(s);
       setTransform(temp);
     }
