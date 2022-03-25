@@ -18,7 +18,6 @@ function Canvas(props) {
   const [transformedMousePos, setTransformedMousePos] = useState([0, 0]);
   const [selectedNumber, setSelectedNumber] = useState("");
   const [scaleFactor, setScaleFactor] = useState(1); // how much to scale canvas by
-  const [prevScaleFactor, setPrevScaleFactor] = useState(1);
   const [centerBool, setCenterBool] = useState(false);
   const [transform, setTransform] = useState([
     1,
@@ -152,15 +151,6 @@ function Canvas(props) {
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.setTransform(...transform);
-
-    // const x = (mousePos.x - transform[4]) / transform[0];
-    // const y = (mousePos.y - transform[5]) / transform[3];
-    // const [x, y] = transformedMousePos;
-
-    // ctx.beginPath();
-    // ctx.arc(x, y, 10, 0, 2 * Math.PI);
-    // ctx.fillStyle = "blue";
-    // ctx.fill();
 
     if (props.showSpiral) {
       drawSpiral(props.spiralLength, props.spiralCorners, ctx); // draw spiral lines

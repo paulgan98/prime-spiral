@@ -102,10 +102,6 @@ function App() {
         setCrazyMode={setCrazyMode}
         setColors={setColors}
         generateRandomColors={generateRandomColors}
-
-        // controlPanelData={controlPanelData}
-        // setControlPanelData={setControlPanelData}
-        // getControlPanelData={getControlPanelData}
       />
     </div>
   );

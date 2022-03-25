@@ -30,8 +30,6 @@ function ControlPanel(props) {
 
   const centerCanvas = () => props.setCenterCanvasBool(true);
 
-  // const toggleSpiral = () => {};
-
   const toggleShowSpiral = () => {
     var elem = document.getElementById("Show-spiral-button");
     if (props.showSpiral) {
