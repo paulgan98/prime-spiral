@@ -122,7 +122,7 @@ function Canvas(props) {
     }
   };
 
-  // draw all circles based on hash table of {[x, y] : number}
+  // draw all circles based on arr
   const drawPrimes = (n, arr, ctx) => {
     var selected = false;
     for (let i = 0; i < n; i++) {
@@ -157,8 +157,8 @@ function Canvas(props) {
     drawPrimes(props.nPrimes, props.primesPos, ctx); // draw circles
 
     // show selected number
-    ctx.font = `${45 / transform[0]}px Arial`;
-    ctx.fillStyle = "red";
+    ctx.font = `${(20 / transform[0]) * scale}px Arial`;
+    ctx.fillStyle = "#03C04A";
     ctx.fillText(
       selectedNumber,
       transformedMousePos[0] + 10,
@@ -168,10 +168,7 @@ function Canvas(props) {
 
   useEffect(() => {
     canvas = canvasRef.current;
-    canvas = createHiPPICanvas(
-      props.windowDims.Width, // * scale,
-      props.windowDims.Height // * scale
-    );
+    canvas = createHiPPICanvas(props.windowDims.Width, props.windowDims.Height);
 
     const context = canvas.getContext("2d");
     draw(context); // draw on canvas

@@ -86,6 +86,7 @@ export function makePrimesArr(n, spiralCorners, primes) {
       let diffVec = [(p2[0] - p1[0]) * delta, (p2[1] - p1[1]) * delta];
       temp[0] += diffVec[0];
       temp[1] += diffVec[1];
+      temp[2] += Math.abs(diffVec[0]) + Math.abs(diffVec[1]);
       arr.push(temp);
       ptr++;
     }

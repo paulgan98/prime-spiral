@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import * as spiral from "../spiralMethods";
 import { MAXLENGTH } from "../App";
 
