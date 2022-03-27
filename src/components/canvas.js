@@ -78,7 +78,6 @@ function Canvas(props) {
     const temp = [...transform];
     temp[4] = temp[4] + xDiff;
     temp[5] = temp[5] + yDiff;
-
     setTransform(temp);
   };
 
@@ -204,6 +203,7 @@ function Canvas(props) {
     scaleFactor,
     transform,
     mousePos,
+    transformedMousePos,
     selectedNumber,
   ]);
   return (
