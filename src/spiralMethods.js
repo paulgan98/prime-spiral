@@ -1,12 +1,15 @@
 // Contains all functions used to build spiral and prime numbers
+
 // return all prime numbers until n
+// based on arr: current known prime numbers
 export function getPrimes(n, arr) {
-  // already calculated, return arr
+  // already calculated, return current array of prime numbers
   if (n <= arr[arr.length - 1]) {
     return arr;
   }
-  // else build
-  var start = Math.max(3, arr[arr.length - 1]);
+  // else build from last unbuilt prime number
+  var start = Math.max(3, arr[arr.length - 1] + 1);
+  start = start % 2 === 0 ? start + 1 : start; // if start number is even, set to next odd number
   for (let i = start; i <= n; i += 2) {
     let isPrime = 1;
     for (let j = 0; j < arr.length; j++) {
@@ -20,6 +23,18 @@ export function getPrimes(n, arr) {
     }
   }
   return arr;
+}
+
+// return number of prime numbers until n
+export function numPrimes(n, primes) {
+  if (n > primes[primes.length - 1]) {
+    primes = getPrimes(n, primes);
+  }
+  var ptr = 0;
+  while (primes[ptr] <= n) {
+    ptr++;
+  }
+  return ptr;
 }
 
 // arr: spiral corners array [x_rel, y_rel, number]
@@ -74,11 +89,15 @@ export function buildSpiral(n, arr, dataArray) {
 
 // make array of relative coords of all prime numbers
 export function makePrimesArr(n, spiralCorners, primes) {
+  // if array already built, return it
+  // if ()
+
   const arr = []; // return this
-  var ptr = 0; // point to primes array
+  var ptr = 0; // pointer for primes array
+  // loop through corner coordinates of spiral [x_rel, y_rel, number]
   for (let i = 1; i < spiralCorners.length; i++) {
-    let p1 = [...spiralCorners[i - 1]];
-    let p2 = [...spiralCorners[i]];
+    let p1 = [...spiralCorners[i - 1]]; // p1 = current element
+    let p2 = [...spiralCorners[i]]; // p2 = next element
     var interval = p2[2] - p1[2];
     while (primes[ptr] > p1[2] && primes[ptr] <= p2[2]) {
       let temp = [...p1];
@@ -86,22 +105,10 @@ export function makePrimesArr(n, spiralCorners, primes) {
       let diffVec = [(p2[0] - p1[0]) * delta, (p2[1] - p1[1]) * delta];
       temp[0] += diffVec[0];
       temp[1] += diffVec[1];
-      temp[2] += Math.abs(diffVec[0]) + Math.abs(diffVec[1]);
+      temp[2] += Math.abs(diffVec[0]) + Math.abs(diffVec[1]); // add distance to get the new prime number
       arr.push(temp);
       ptr++;
     }
   }
   return arr;
 }
-
-// return number of prime numbers until n
-export const numPrimes = (n, primes) => {
-  if (n > primes[primes.length - 1]) {
-    primes = getPrimes(n, primes);
-  }
-  var ptr = 0;
-  while (primes[ptr] <= n) {
-    ptr++;
-  }
-  return ptr;
-};

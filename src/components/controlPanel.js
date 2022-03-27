@@ -2,6 +2,17 @@ import React from "react";
 import * as spiral from "../spiralMethods";
 import { MAXLENGTH } from "../App";
 
+// var toPrint = [];
+
+// const Print = () => {
+//   var a = [];
+//   for (let i = 0; i < toPrint.length; i++) {
+//     a.push("/");
+//     a.push(toPrint[i]);
+//   }
+//   return a;
+// };
+
 // Controls component for modifying Canvas
 function ControlPanel(props) {
   // update function to be called only when spiral length changes
@@ -10,11 +21,11 @@ function ControlPanel(props) {
     props.setSpiralCorners(
       spiral.buildSpiral(n, props.spiralCorners, props.dataArr)
     );
-    props.setPrimes(spiral.getPrimes(n, props.primes));
     props.setNPrimes(spiral.numPrimes(n, props.primes));
+    props.setPrimes(spiral.getPrimes(n, props.primes));
     props.setPrimesPos(
       spiral.makePrimesArr(n, props.spiralCorners, props.primes)
-    );
+    ); // primesPos is array of all circle coordinates used by drawPrimes
   };
 
   const handleSpiralLengthInput = () => {
@@ -49,7 +60,7 @@ function ControlPanel(props) {
     } else {
       elem.innerHTML = "Normal Mode";
       props.setCrazyMode(true);
-      props.setColors(props.generateRandomColors);
+      props.setColors(props.generateRandomColors(MAXLENGTH));
     }
   };
 

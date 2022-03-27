@@ -15,8 +15,9 @@ function App() {
   // State hooks; will be passed as props to ControlPanel and Canvas
 
   // [adPtr, steps, counter, i]
-  const [dataArr, _] = useState([0, 1, 2, 2]);
+  const [dataArr] = useState([0, 1, 2, 2]);
   const [spiralLength, setSpiralLength] = useState(SPIRALLENGTH);
+  // primes: array of all prime numbers until max spiral length
   const [primes, setPrimes] = useState(spiral.getPrimes(SPIRALLENGTH, [2]));
   const [spiralCorners, setSpiralCorners] = useState(
     spiral.buildSpiral(SPIRALLENGTH, [[0, 0, 1]], dataArr)
@@ -36,8 +37,20 @@ function App() {
   const [showSpiral, setShowSpiral] = useState(true);
   const [crazyMode, setCrazyMode] = useState(false);
 
-  const _colors = generateRandomColors;
-  const [colors, setColors] = useState(_colors);
+  // build a list of n random colors in hex format
+  const generateRandomColors = (n) => {
+    var colorsArray = [];
+    const letters = "0123456789ABCDEF";
+    for (let i = 0; i < n; i++) {
+      var randomColor = "#";
+      for (let j = 0; j < 6; j++) {
+        randomColor += letters[Math.floor(Math.random() * 16)];
+      }
+      colorsArray.push(randomColor);
+    }
+    return colorsArray;
+  };
+  const [colors, setColors] = useState(generateRandomColors(MAXLENGTH));
 
   // Methods
   const handleResize = () => {
@@ -45,17 +58,6 @@ function App() {
       Width: window.innerWidth - 60,
       Height: window.innerHeight - 160,
     });
-  };
-
-  const generateRandomColors = () => {
-    var colors = [];
-    for (let i = 0; i < spiralLength; i++) {
-      const randomColor = "#".concat(
-        Math.floor(Math.random() * 16777215).toString(16)
-      );
-      colors.push(randomColor);
-    }
-    return colors;
   };
 
   useEffect(() => {

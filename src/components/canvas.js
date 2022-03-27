@@ -18,7 +18,6 @@ function Canvas(props) {
   const [transformedMousePos, setTransformedMousePos] = useState([0, 0]);
   const [selectedNumber, setSelectedNumber] = useState("");
   const [scaleFactor, setScaleFactor] = useState(1); // how much to scale canvas by
-  const [centerBool, setCenterBool] = useState(false);
   const [transform, setTransform] = useState([
     1,
     0,
@@ -40,7 +39,6 @@ function Canvas(props) {
   }
 
   const centerCanvas = () => {
-    setCenterBool(true);
     const temp = [...transform];
     temp[4] = (props.windowDims.Width / 2) * scale;
     temp[5] = (props.windowDims.Height / 2) * scale;
@@ -82,7 +80,6 @@ function Canvas(props) {
     temp[5] = temp[5] + yDiff;
 
     setTransform(temp);
-    updateMousePositions(e);
   };
 
   // sets mouse position
@@ -95,8 +92,7 @@ function Canvas(props) {
 
   const handleZoom = (e) => {
     e.preventDefault();
-    updateMousePositions(e);
-    const zoomSpeed = 0.001;
+    const zoomSpeed = 0.002;
     var s = scaleFactor + e.deltaY * -zoomSpeed;
     s = Math.min(Math.max(0.05, s), 7);
     if (scaleFactor !== s) {
@@ -130,14 +126,15 @@ function Canvas(props) {
       for (let j = 0; j < 2; j++) {
         coord[j] *= STEPSIZE * STEPSCALE;
       }
-      if (!isInCircle(transformedMousePos, coord, CIRCLESIZE + 2)) {
-        const color = props.crazyMode ? props.colors[i] : "black";
-        drawCircle(coord[0], coord[1], CIRCLESIZE, color, ctx);
-      } else {
-        // mouse is in circle
-        drawCircle(coord[0], coord[1], CIRCLESIZE, "red", ctx);
+
+      // mouse is in circle
+      if (isInCircle(transformedMousePos, coord, CIRCLESIZE + 2) && !selected) {
+        drawCircle(coord[0], coord[1], CIRCLESIZE * 1.5, "red", ctx);
         selected = true;
         setSelectedNumber(coord[2].toString());
+      } else {
+        let color = props.crazyMode ? props.colors[i] : "black";
+        drawCircle(coord[0], coord[1], CIRCLESIZE, color, ctx);
       }
     }
     if (!selected) {
@@ -145,18 +142,8 @@ function Canvas(props) {
     }
   };
 
-  // draw on canvas
-  const draw = (ctx) => {
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.setTransform(...transform);
-
-    if (props.showSpiral) {
-      drawSpiral(props.spiralLength, props.spiralCorners, ctx); // draw spiral lines
-    }
-    drawPrimes(props.nPrimes, props.primesPos, ctx); // draw circles
-
-    // show selected number
+  // show selected number
+  const showSelectedNumber = (ctx) => {
     ctx.font = `${(20 / transform[0]) * scale}px Arial`;
     ctx.fillStyle = "#03C04A";
     ctx.fillText(
@@ -166,10 +153,21 @@ function Canvas(props) {
     );
   };
 
-  useEffect(() => {
-    canvas = canvasRef.current;
-    canvas = createHiPPICanvas(props.windowDims.Width, props.windowDims.Height);
+  // draw on canvas
+  const draw = (ctx) => {
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    ctx.setTransform(...transform);
 
+    if (props.showSpiral) {
+      drawSpiral(props.spiralLength, props.spiralCorners, ctx); // draw spiral lines
+    }
+    drawPrimes(props.nPrimes, props.primesPos, ctx); // draw circles
+    showSelectedNumber(ctx);
+  };
+
+  useEffect(() => {
+    canvas = createHiPPICanvas(props.windowDims.Width, props.windowDims.Height);
     const context = canvas.getContext("2d");
     draw(context); // draw on canvas
 
@@ -204,12 +202,21 @@ function Canvas(props) {
     props.showSpiral,
     props.crazyMode,
     scaleFactor,
-    centerBool,
     transform,
-    transformedMousePos,
+    mousePos,
     selectedNumber,
   ]);
-  return <canvas ref={canvasRef} className="Canvas" />;
+  return (
+    <div>
+      <canvas ref={canvasRef} className="Canvas" />
+      {/* <div>
+        {toPrint[0]}/{toPrint[1]}/{toPrint[2]}/{toPrint[3]}
+      </div>
+      <div>
+        {transformedMousePos[0]}/{transformedMousePos[1]}
+      </div> */}
+    </div>
+  );
 }
 
 export default Canvas;
