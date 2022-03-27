@@ -209,12 +209,6 @@ function Canvas(props) {
   return (
     <div>
       <canvas ref={canvasRef} className="Canvas" />
-      {/* <div>
-        {toPrint[0]}/{toPrint[1]}/{toPrint[2]}/{toPrint[3]}
-      </div>
-      <div>
-        {transformedMousePos[0]}/{transformedMousePos[1]}
-      </div> */}
     </div>
   );
 }
