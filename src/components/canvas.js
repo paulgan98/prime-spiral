@@ -80,11 +80,6 @@ function Canvas(props) {
     var rect = canvas.getBoundingClientRect();
     const xDiff = (e.clientX - rect.left) * scale - mousePos.x,
       yDiff = (e.clientY - rect.top) * scale - mousePos.y;
-    // const x = mousePos.x,
-    //   y = mousePos.y;
-    // updateMousePositions(e);
-    // const xDiff = mousePos.x - x,
-    //   yDiff = mousePos.y - y;
 
     const temp = [...transform];
     temp[4] += xDiff;
@@ -95,10 +90,6 @@ function Canvas(props) {
 
   // sets mouse position
   const handleMouseMove = (e) => {
-    // console.log([
-    //   transformedMousePos.x - clickedMousePos.x,
-    //   transformedMousePos.y - clickedMousePos.y,
-    // ]);
     updateMousePositions(e);
     if (isMouseDown) {
       handlePan(e);
@@ -193,9 +184,6 @@ function Canvas(props) {
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     ctx.setTransform(...transform);
-
-    // drawCircle(transformedMousePos.x, transformedMousePos.y, 30, "blue", ctx);
-    // drawCircle(clickedMousePos.x, clickedMousePos.y, 30, "blue", ctx);
 
     if (props.showSpiral) {
       drawSpiral(props.spiralLength, props.spiralCorners, ctx); // draw spiral lines
