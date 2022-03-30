@@ -15,7 +15,10 @@ function Canvas(props) {
   // state hooks
   const [isMouseDown, setMouseDown] = useState(0);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [transformedMousePos, setTransformedMousePos] = useState([0, 0]);
+  const [transformedMousePos, setTransformedMousePos] = useState({
+    x: 0,
+    y: 0,
+  });
   const [selectedNumber, setSelectedNumber] = useState("");
   const [scaleFactor, setScaleFactor] = useState(1); // how much to scale canvas by
   const [transform, setTransform] = useState([
@@ -53,13 +56,16 @@ function Canvas(props) {
       x: (e.clientX - rect.left) * scale,
       y: (e.clientY - rect.top) * scale,
     });
-    setTransformedMousePos([
-      (mousePos.x - transform[4]) / transform[0],
-      (mousePos.y - transform[5]) / transform[3],
-    ]);
+    setTransformedMousePos({
+      x: (mousePos.x - transform[4]) / transform[0],
+      y: (mousePos.y - transform[5]) / transform[3],
+    });
   };
 
   const handleMouseDown = (e) => {
+    if (!isMouseDown) {
+      updateMousePositions(e);
+    }
     setMouseDown(1);
   };
 
@@ -72,17 +78,27 @@ function Canvas(props) {
     e.preventDefault();
     // calculate how much mouse moved
     var rect = canvas.getBoundingClientRect();
-    const xDiff = (e.clientX - rect.left) * scale - mousePos.x;
-    const yDiff = (e.clientY - rect.top) * scale - mousePos.y;
+    const xDiff = (e.clientX - rect.left) * scale - mousePos.x,
+      yDiff = (e.clientY - rect.top) * scale - mousePos.y;
+    // const x = mousePos.x,
+    //   y = mousePos.y;
+    // updateMousePositions(e);
+    // const xDiff = mousePos.x - x,
+    //   yDiff = mousePos.y - y;
 
     const temp = [...transform];
-    temp[4] = temp[4] + xDiff;
-    temp[5] = temp[5] + yDiff;
+    temp[4] += xDiff;
+    temp[5] += yDiff;
+
     setTransform(temp);
   };
 
   // sets mouse position
   const handleMouseMove = (e) => {
+    // console.log([
+    //   transformedMousePos.x - clickedMousePos.x,
+    //   transformedMousePos.y - clickedMousePos.y,
+    // ]);
     updateMousePositions(e);
     if (isMouseDown) {
       handlePan(e);
@@ -117,6 +133,18 @@ function Canvas(props) {
     }
   };
 
+  const isInViewport = (x, y) => {
+    if (
+      x >= (-props.windowDims.Width / 2) * scale &&
+      x <= props.windowDims.Width * scale &&
+      y >= (-props.windowDims.Height / 2) * scale &&
+      y <= props.windowDims.Height * scale
+    ) {
+      return true;
+    }
+    return false;
+  };
+
   // draw all circles based on arr
   const drawPrimes = (n, arr, ctx) => {
     var selected = false;
@@ -125,15 +153,23 @@ function Canvas(props) {
       for (let j = 0; j < 2; j++) {
         coord[j] *= STEPSIZE * STEPSCALE;
       }
-
-      // mouse is in circle
-      if (isInCircle(transformedMousePos, coord, CIRCLESIZE + 2) && !selected) {
-        drawCircle(coord[0], coord[1], CIRCLESIZE * 1.5, "red", ctx);
-        selected = true;
-        setSelectedNumber(coord[2].toString());
-      } else {
-        let color = props.crazyMode ? props.colors[i] : "black";
-        drawCircle(coord[0], coord[1], CIRCLESIZE, color, ctx);
+      if (isInViewport(coord[0], coord[1])) {
+        // mouse is in circle
+        if (
+          isInCircle(
+            [transformedMousePos.x, transformedMousePos.y],
+            coord,
+            CIRCLESIZE + 2
+          ) &&
+          !selected
+        ) {
+          drawCircle(coord[0], coord[1], CIRCLESIZE * 1.5, "red", ctx);
+          selected = true;
+          setSelectedNumber(coord[2].toString());
+        } else {
+          let color = props.crazyMode ? props.colors[i] : "black";
+          drawCircle(coord[0], coord[1], CIRCLESIZE, color, ctx);
+        }
       }
     }
     if (!selected) {
@@ -147,8 +183,8 @@ function Canvas(props) {
     ctx.fillStyle = "#03C04A";
     ctx.fillText(
       selectedNumber,
-      transformedMousePos[0] + 10,
-      transformedMousePos[1] - 10
+      transformedMousePos.x + 10,
+      transformedMousePos.y - 10
     );
   };
 
@@ -157,6 +193,9 @@ function Canvas(props) {
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     ctx.setTransform(...transform);
+
+    // drawCircle(transformedMousePos.x, transformedMousePos.y, 30, "blue", ctx);
+    // drawCircle(clickedMousePos.x, clickedMousePos.y, 30, "blue", ctx);
 
     if (props.showSpiral) {
       drawSpiral(props.spiralLength, props.spiralCorners, ctx); // draw spiral lines
@@ -194,7 +233,7 @@ function Canvas(props) {
       canvas.removeEventListener("mouseleave", handleMouseLeave);
     };
   }, [
-    isMouseDown,
+    // isMouseDown,
     props.spiralLength,
     props.windowDims,
     props.centerCanvasBool,
